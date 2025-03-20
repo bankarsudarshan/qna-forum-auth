@@ -13,6 +13,18 @@ class UserRepository {
         }
     }
 
+    async getById(userId) {
+        try{
+            const user = await User.findByPk(userId, {
+                attributes: { exclude: ['password'] },
+            });
+            return user;
+        } catch(error) {
+            console.log('Something went wrong while creating new user');
+            throw error;
+        }
+    }
+
     async deleteUser(userId) {
         try{
             const response = await User.destroy({
