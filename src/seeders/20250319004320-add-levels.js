@@ -12,44 +12,44 @@ module.exports = {
      *   isBetaMember: false
      * }], {});
     */
-    await queryInterface.bulkInsert('roles',
+    await queryInterface.bulkInsert('levels',
       [
         {
-          role_name: 'principal',
+          level_name: 'principal',
           createdAt: new Date(),
-          updataedAt: new Date(),
+          updatedAt: new Date(),
         },
         {
-          role_name: 'hod',
+          level_name: 'hod',
           createdAt: new Date(),
-          updataedAt: new Date(),
+          updatedAt: new Date(),
         },
         {
-          role_name: 'teacher',
+          level_name: 'teacher',
           createdAt: new Date(),
-          updataedAt: new Date(),
+          updatedAt: new Date(),
         },
         {
-          role_name: 'master',
+          level_name: 'master',
           createdAt: new Date(),
-          updataedAt: new Date(),
+          updatedAt: new Date(),
         },
         {
-          role_name: 'graduate',
+          level_name: 'graduate',
           createdAt: new Date(),
-          updataedAt: new Date(),
+          updatedAt: new Date(),
         },
         {
-          role_name: 'student',
+          level_name: 'student',
           createdAt: new Date(),
-          updataedAt: new Date(),
+          updatedAt: new Date(),
         },
       ], {});
   },
 
   async down (queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('roles', {
-      role_name: {
+    await queryInterface.bulkDelete('levels', {
+      level_name: {
         [Op.or]: ['principal', 'hod', 'teacher', 'master', 'grad', 'student'],
       }
     });

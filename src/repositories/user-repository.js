@@ -2,7 +2,7 @@ const { User } = require('../models');
 const { Op } = require('sequelize');
 
 class UserRepository {
-    
+
     async insertUser(data) {
         try{
             const user = await User.create(data);
@@ -48,6 +48,26 @@ class UserRepository {
             return response;
         } catch(error) {
             console.log('Something went wrong while deleting user');
+            throw error;
+        }
+    }
+
+    async updateLastLogin(latestUserEmail) {
+        try {
+            const response = await User.update(
+                { 
+                    last_login_at: new Date(),
+                },
+                {
+                    where: {
+                        email: latestUserEmail,
+                    }
+                }
+            );
+            return response;
+        } catch (error) {
+            console.log(error);
+            console.log('Something went wrong while updating the last login column for user');
             throw error;
         }
     }

@@ -9,7 +9,7 @@ router.post('/signup',
 );
 
 router.post('/signin',
-    UserMiddlewares.validateSigninReq,
+    UserMiddlewares.validateSignInReq,
     UserController.signIn
 );
 

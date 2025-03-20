@@ -1,7 +1,6 @@
 const express = require('express')
 const { PORT } = require('./config/server-config');
-const apiRoutes = require('./routes')
-const router = express.Router();
+const apiRoutes = require('./routes');
 
 const app = express();
 // /api/v1/users
@@ -11,10 +10,10 @@ const prepareAndStartServer = () => {
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
 
-    router.use('/api', apiRoutes);
+    app.use('/api', apiRoutes);
 
     app.listen(PORT, () => {
-        console.log(`Server up and running on ${PORT}`);
+        console.log(`server up and running on ${PORT}`);
     });
 }
 

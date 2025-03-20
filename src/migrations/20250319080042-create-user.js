@@ -23,11 +23,10 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
-      role_id: {
+      level_id: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: {
-          model: 'roles',
+          model: 'levels',
           key: 'id',
         },
         onUpdate: 'CASCADE',
@@ -35,7 +34,7 @@ module.exports = {
       },
       last_login_at: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: true,
       },
       about: {
         type: Sequelize.TEXT,

@@ -1,45 +1,53 @@
+const { StatusCodes } = require("http-status-codes");
+const { ErrorResponse } = require("../utils");
+const AppError = require("../utils/app-error");
+
 function validateCreateUserReq(req, res, next) {
     if(req.body.username && req.body.email && req.body.password) {
         next();
+    } else {
+        ErrorResponse.message = "incomplete information sent to create new user";
+    
+        const explanations = [];
+        if (!req.body.username) {
+            explanations.push("username is missing");
+        }
+        if (!req.body.email) {
+            explanations.push("email is missing");
+        }
+        if (!req.body.password) {
+            explanations.push("password is missing")
+        }
+    
+        ErrorResponse.error = new AppError( explanations, StatusCodes.BAD_REQUEST );
+        return res
+                .status(StatusCodes.BAD_REQUEST)
+                .json(ErrorResponse);
     }
-    const explanations = [];
-    if(!req.body.username) {
-        explanations.push('username is missing');
-    }
-    if(!req.body.email) {
-        explanations.push('email is missing');
-    }
-    if(!req.body.password) {
-        explanations.push('password is missing');
-    }
-    return res.status(400).json({
-        message: 'Something fields are missing in the incoming request to be able to create a new user',
-        data: {},
-        success: false,
-        err: new Error(`${explanations}`),
-    })
 }
 
-function validateSigninReq(req, res, next) {
+function validateSignInReq(req, res, next) {
     if(req.body.email && req.body.password) {
         next();
+    } else {
+        ErrorResponse.message = "incomplete information sent to sign in";
+
+        const explanations = [];
+        if(!req.body.email) {
+            explanations.push('email is missing');
+        }
+        if(!req.body.password) {
+            explanations.push('password is missing');
+        }
+
+        ErrorResponse.error = new AppError( explanations, StatusCodes.BAD_REQUEST );
+        return res
+                .status(StatusCodes.BAD_REQUEST)
+                .json(ErrorResponse);
     }
-    const explanations = [];
-    if(!req.body.email) {
-        explanations.push('email is missing');
-    }
-    if(!req.body.password) {
-        explanations.push('password is missing');
-    }
-    return res.status(400).json({
-        message: 'Something fields are missing in the incoming request to be able to create a new user',
-        data: {},
-        success: false,
-        err: new Error(`${explanations}`),
-    })
 }
 
 module.exports = {
     validateCreateUserReq,
-    validateSigninReq,
+    validateSignInReq,
 }

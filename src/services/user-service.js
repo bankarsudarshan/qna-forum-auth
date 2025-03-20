@@ -2,6 +2,8 @@ const UserRepository = require('../repositories/user-repository');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { JWT_PRIVATE_KEY } = require('../config/server-config');
+const { StatusCodes } = require('http-status-codes');
+const AppError = require("../utils/app-error");
 
 class UserService {
     constructor() {
@@ -11,22 +13,28 @@ class UserService {
     async createUser(data) {
         try{
             const user = await this.userRepository.insertUser(data);
-            return response;
+            return user;
         } catch(error) {
-            console.log('something went wrong in the service layer');
-            throw error;
+            if (error.name == "SequelizeValidationError") {
+                let explanation = [];
+                error.errors.forEach((err) => {
+                    explanation.push(err.message);
+                });
+                throw new AppError(explanation, StatusCodes.BAD_REQUEST);
+            }
+            throw new AppError("cannot create a new user", StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
     createToken(user) {
         try {
-            const token = jwt.sign(user, JWT_PRIVATE_KEY, {
+            const token = jwt.sign(user.get({plain: true}), JWT_PRIVATE_KEY, {
                 expiresIn: '5h',
             });
             return token;
         } catch (error) {
-            console.log('something went wrong in the service layer');
-            throw error;
+            console.log(error);
+            throw new AppError("somthing went wrong while creating token", StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -35,15 +43,9 @@ class UserService {
             const user = jwt.verify(token, JWT_PRIVATE_KEY);
             return user;
         } catch (error) {
-            console.log('something went wrong in the service layer');
-            throw error;
+            throw new AppError("invalid or expired token", StatusCodes.UNAUTHORIZED);
         }
     }
-
-    // async checkPassword(encryptedPw, plainPw) {;
-    //     const match = await bcrypt.compare(encryptedPw, plainPw);
-    //     return match;
-    // }
 
     async isAuthentiated(token) {
         try {
@@ -51,14 +53,14 @@ class UserService {
             // if the token was malformed, then verify function will throw an error
 
             // if the user associated with the token was deleted from the database, then also the token is invalid
-            const user = await this.userRepository.getByEmail(email);
+            const user = await this.userRepository.getByEmail(decoded.email);
+            console.log('hi in isAuthenticated service')
             if (!user) {
-                throw { error: 'User not found' };
+                throw new AppError("user associated with this token no longer exists", StatusCodes.UNAUTHORIZED);
             }
             return user.id;
         } catch (error) {
-            console.log('something went wrong in the service layer');
-            throw error;
+            throw new AppError("authentication failed", StatusCodes.UNAUTHORIZED);
         }
     }
 
@@ -66,26 +68,31 @@ class UserService {
         try {
             const user = await this.userRepository.getByEmail(email);
             if (!user) {
-                throw { error: 'User not found' };
+                throw new AppError("user not found",StatusCodes.NOT_FOUND);
             }
+            console.log('hi2');
             const match = await bcrypt.compare(plainPw, user.password);
             if (!match) {
-                throw { error: 'The password is incorrect' };
+                throw new AppError("Incorrect password", StatusCodes.UNAUTHORIZED);
             }
+            const response = await this.userRepository.updateLastLogin(email);
+            console.log(response);
             return this.createToken(user);
         } catch (error) {
-            console.log('something went wrong in the service layer', error.message);
-            throw error;
+            throw new AppError("sign-in failed",StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 
     async deleteUser(userId) {
-        try{
-            const response = await this.userRepository.deleteUser(userId);
-            return response;
-        } catch(error){
-            console.log('Something went wrong in the service layer');
-            throw error;
+        try {
+            const user = await this.userRepository.getById(userId);
+            if (!user) {
+                throw new AppError("user not found", StatusCodes.NOT_FOUND);
+            }
+            await this.userRepository.deleteUser(userId);
+            return { message: "user deleted successfully" };
+        } catch (error) {
+            throw new AppError("cannot delete user", StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }
 }

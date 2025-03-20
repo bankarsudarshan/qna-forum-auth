@@ -1,4 +1,7 @@
 const UserService = require('../services/user-service');
+const { StatusCodes } = require("http-status-codes");
+const { ErrorResponse, SuccessResponse } = require("../utils");
+const AppError = require("../utils/app-error");
 
 const userService = new UserService();
 
@@ -9,40 +12,34 @@ const create = async (req, res) => {
             email: req.body.email,
             password: req.body.password,
         });
-        return res.status(201).json({
-            success: true,
-            messge: 'Successfully created a new user',
-            data: response,
-            err: {},
-        });
+        SuccessResponse.message = 'successfully created a new user';
+        SuccessResponse.data = response;
+
+        return res
+                .status(StatusCodes.CREATED)
+                .json(SuccessResponse);
     } catch(error) {
-        console.log(error);
-        return res.status(500).json({
-            message: 'Something went wrong',
-            data: {},
-            success: false,
-            err: error,
-        });
+        ErrorResponse.error = error;
+        return res
+                .status(error.statusCode)
+                .json(ErrorResponse);
     }
 }
 
 const signIn = async (req, res) => {
     try{
         const response = await userService.signIn(req.body.email, req.body.password);
-        return res.status(201).json({
-            success: true,
-            messge: 'Successfully signed in',
-            data: response,
-            err: {},
-        })
+        SuccessResponse.message = 'user sign in successful';
+        SuccessResponse.data = response;
+
+        return res
+                .status(StatusCodes.CREATED)
+                .json(SuccessResponse);
     } catch(error) {
-        console.log(error);
-        return res.status(500).json({
-            message: 'Something went wrong',
-            data: {},
-            success: false,
-            err: error,
-        });
+        ErrorResponse.error = error;
+        return res
+                .status(error.statusCode)
+                .json(ErrorResponse);
     }
 }
 
@@ -51,20 +48,17 @@ async function isAuthenticated(req, res) {
         // fetch the jwt token from headers
         const token = req.headers['x-access-token'];
         const response = await userService.isAuthentiated(token);
-        return res.status(200).json({
-            success: true,
-            err: {},
-            data: response,
-            message: 'User is authenticated and token is valid',
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            message: 'Something went wrong',
-            data: {},
-            success: false,
-            err: error,
-        });
+        SuccessResponse.message = 'user is authenticated and token is valid';
+        SuccessResponse.data = response;
+
+        return res
+                .status(StatusCodes.CREATED)
+                .json(SuccessResponse);
+    } catch(error) {
+        ErrorResponse.error = error;
+        return res
+                .status(error.statusCode)
+                .json(ErrorResponse);
     }
 }
 

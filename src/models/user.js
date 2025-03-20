@@ -12,8 +12,8 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      this.belongsTo(models.Role, {
-        foreignKey: 'role_id',
+      this.belongsTo(models.Level, {
+        foreignKey: 'level_id',
         targetKey: 'id',
       });
     }
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
       references: {
-        model: 'Role',
+        model: 'Level',
         key: 'id',
       }
     },
@@ -42,17 +42,16 @@ module.exports = (sequelize, DataTypes) => {
         len: [8, 16],
       }
     },
-    role_id: {
+    level_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
       references: {
-        model: 'Role',
+        model: 'Level',
         key: 'id',
-      }
+      },
+      defaultValue: 6,
     },
     last_login_at: {
       type: DataTypes.DATE,
-      allowNull: false,
     },
     about: {
       type: DataTypes.TEXT,
