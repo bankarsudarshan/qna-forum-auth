@@ -45,6 +45,23 @@ class UserService {
     //     return match;
     // }
 
+    async isAuthentiated(token) {
+        try {
+            const decoded = this.verifyToken(token);
+            // if the token was malformed, then verify function will throw an error
+
+            // if the user associated with the token was deleted from the database, then also the token is invalid
+            const user = await this.userRepository.getByEmail(email);
+            if (!user) {
+                throw { error: 'User not found' };
+            }
+            return user.id;
+        } catch (error) {
+            console.log('something went wrong in the service layer');
+            throw error;
+        }
+    }
+
     async signIn(email, plainPw) {
         try {
             const user = await this.userRepository.getByEmail(email);

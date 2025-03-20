@@ -14,7 +14,7 @@ const create = async (req, res) => {
             messge: 'Successfully created a new user',
             data: response,
             err: {},
-        })
+        });
     } catch(error) {
         console.log(error);
         return res.status(500).json({
@@ -22,7 +22,7 @@ const create = async (req, res) => {
             data: {},
             success: false,
             err: error,
-        })
+        });
     }
 }
 
@@ -42,11 +42,34 @@ const signIn = async (req, res) => {
             data: {},
             success: false,
             err: error,
-        })
+        });
+    }
+}
+
+async function isAuthenticated(req, res) {
+    try {
+        // fetch the jwt token from headers
+        const token = req.headers['x-access-token'];
+        const response = await userService.isAuthentiated(token);
+        return res.status(200).json({
+            success: true,
+            err: {},
+            data: response,
+            message: 'User is authenticated and token is valid',
+        });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            message: 'Something went wrong',
+            data: {},
+            success: false,
+            err: error,
+        });
     }
 }
 
 module.exports = {
     create,
     signIn,
+    isAuthenticated,
 }
