@@ -26,6 +26,12 @@ module.exports = {
       role_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'roles',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'RESTRICT',
       },
       last_login_at: {
         type: Sequelize.DATE,
