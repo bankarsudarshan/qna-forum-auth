@@ -19,6 +19,11 @@ const create = async (req, res) => {
                 .status(StatusCodes.CREATED)
                 .json(SuccessResponse);
     } catch(error) {
+        if(error.statusCode == 409) {
+            ErrorResponse.message = "resource already exists";
+        } else if (error.statusCode == 400) {
+            ErrorResponse.message = "the resource did not pass the validation criteria";
+        }
         ErrorResponse.error = error;
         return res
                 .status(error.statusCode)

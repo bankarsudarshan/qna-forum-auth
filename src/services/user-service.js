@@ -15,6 +15,13 @@ class UserService {
             const user = await this.userRepository.insertUser(data);
             return user;
         } catch(error) {
+            if(error.name == "SequelizeUniqueConstraintError") {
+                let explanation = [];
+                error.errors.forEach((err) => {
+                    explanation.push(err.message);
+                });
+                throw new AppError(explanation, StatusCodes.CONFLICT);
+            }
             if (error.name == "SequelizeValidationError") {
                 let explanation = [];
                 error.errors.forEach((err) => {
@@ -54,7 +61,6 @@ class UserService {
 
             // if the user associated with the token was deleted from the database, then also the token is invalid
             const user = await this.userRepository.getByEmail(decoded.email);
-            console.log('hi in isAuthenticated service')
             if (!user) {
                 throw new AppError("user associated with this token no longer exists", StatusCodes.UNAUTHORIZED);
             }
