@@ -57,7 +57,7 @@ async function isAuthenticated(req, res) {
         SuccessResponse.data = response;
 
         return res
-                .status(StatusCodes.CREATED)
+                .status(StatusCodes.OK)
                 .json(SuccessResponse);
     } catch(error) {
         ErrorResponse.error = error;
