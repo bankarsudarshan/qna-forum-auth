@@ -1,7 +1,6 @@
 const UserService = require('../services/user-service');
 const { StatusCodes } = require("http-status-codes");
 const { ErrorResponse, SuccessResponse } = require("../utils");
-const AppError = require("../utils/app-error");
 
 const userService = new UserService();
 
@@ -60,6 +59,7 @@ async function isAuthenticated(req, res) {
                 .status(StatusCodes.OK)
                 .json(SuccessResponse);
     } catch(error) {
+        ErrorResponse.message = 'error while authenticating the jsonwebtoken';
         ErrorResponse.error = error;
         return res
                 .status(error.statusCode)
