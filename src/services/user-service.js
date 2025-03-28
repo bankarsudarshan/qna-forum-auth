@@ -75,7 +75,6 @@ class UserService {
             if (!user) {
                 throw new AppError("ClientSideError", "user not found",StatusCodes.NOT_FOUND);
             }
-            console.log('hi2');
             const match = await bcrypt.compare(plainPw, user.password);
             if (!match) {
                 throw new AppError("ClientSideError", "Incorrect password", StatusCodes.UNAUTHORIZED);
