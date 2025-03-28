@@ -1,8 +1,14 @@
+const { StatusCodes } = require('http-status-codes');
 class AppError extends Error {
-    constructor(message, statusCode) {
-        super(message);
-        this.statusCode = statusCode;
-        this.explanation = message;
+    constructor(
+                name = 'AppError',
+                explanation = 'Something went wrong', 
+                statusCode = StatusCodes.INTERNAL_SERVER_ERROR
+                ) {
+        super();
+        this.explanation = explanation,
+        this.name = name,
+        this.statusCode = statusCode
     }
 }
 
