@@ -17,6 +17,19 @@ class UserRepository {
         try {
             const user = await User.findOne({
                 where: { email: userEmail },
+            });
+    
+            return user; // Returns the user or null if not found
+        } catch (error) {
+            console.log('Something went wrong while fetching user:', error.message);
+            throw error;
+        }
+    }    
+
+    async getByEmail_secure(userEmail) {
+        try {
+            const user = await User.findOne({
+                where: { email: userEmail },
                 attributes: {
                     exclude: ['password'],
                 }
@@ -27,7 +40,7 @@ class UserRepository {
             console.log('Something went wrong while fetching user:', error.message);
             throw error;
         }
-    }    
+    }  
 
     async getById(userId) {
         try{
