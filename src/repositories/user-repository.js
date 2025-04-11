@@ -17,6 +17,9 @@ class UserRepository {
         try {
             const user = await User.findOne({
                 where: { email: userEmail },
+                attributes: {
+                    exclude: ['password'],
+                }
             });
     
             return user; // Returns the user or null if not found
@@ -29,7 +32,7 @@ class UserRepository {
     async getById(userId) {
         try{
             const user = await User.findByPk(userId, {
-                attributes: { exclude: ['password'] },
+                attributes: { exclude: [ 'id', 'password' ] },
             });
             return user;
         } catch(error) {

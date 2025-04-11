@@ -33,6 +33,29 @@ class UserService {
         }
     }
 
+    async getUser(userId) {
+        try {
+            const user = await this.userRepository.getById(userId);
+            if(!user) {
+                throw new AppError("NotFoundError", "user with the x-access-token does not exist", StatusCodes.NOT_FOUND);
+            }
+            return user;
+        } catch (error) {
+            console.log(error);
+            throw new AppError("AppError", "somthing went wrong while getting user", StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async getUserByEmail(email) {
+        try {
+            const user = await this.userRepository.getByEmail(email);
+            return user;
+        } catch (error) {
+            console.log('something went wrong in user-service getUserByEmail function');
+            throw new AppError();
+        }
+    }
+
     createToken(user) {
         try {
             const token = jwt.sign(user.get({plain: true}), JWT_PRIVATE_KEY, {
