@@ -33,6 +33,29 @@ class UserService {
         }
     }
 
+    async getUser(userId) {
+        try {
+            const user = await this.userRepository.getById(userId);
+            if(!user) {
+                throw new AppError("NotFoundError", "user with the x-access-token does not exist", StatusCodes.NOT_FOUND);
+            }
+            return user;
+        } catch (error) {
+            console.log(error);
+            throw new AppError("AppError", "somthing went wrong while getting user", StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async getUserByEmail(email) {
+        try {
+            const user = await this.userRepository.getByEmail_secure(email);
+            return user;
+        } catch (error) {
+            console.log('something went wrong in user-service getUserByEmail function');
+            throw new AppError();
+        }
+    }
+
     createToken(user) {
         try {
             const token = jwt.sign(user.get({plain: true}), JWT_PRIVATE_KEY, {
@@ -76,6 +99,7 @@ class UserService {
                 throw new AppError("ClientSideError", "user not found",StatusCodes.NOT_FOUND);
             }
             const match = await bcrypt.compare(plainPw, user.password);
+            console.log(match, 'hi')
             if (!match) {
                 throw new AppError("ClientSideError", "Incorrect password", StatusCodes.UNAUTHORIZED);
             }
@@ -83,6 +107,7 @@ class UserService {
             console.log(response);
             return this.createToken(user);
         } catch (error) {
+            console.log(error);
             throw new AppError('AppError', [error.message], StatusCodes.INTERNAL_SERVER_ERROR);
         }
     }

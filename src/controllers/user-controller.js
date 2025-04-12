@@ -67,8 +67,29 @@ async function isAuthenticated(req, res) {
     }
 }
 
+async function getUser(req, res) {
+    try {
+        const token = req.headers['x-access-token'];
+        const decoded = userService.verifyToken(token);
+        const user = await userService.getUserByEmail(decoded.email);
+        SuccessResponse.message = 'user information retrieved successfully';
+        SuccessResponse.data = user.dataValues;
+
+        return res
+                .status(StatusCodes.OK)
+                .json(SuccessResponse);
+    } catch (error) {
+        ErrorResponse.message = 'error while retrieving user';
+        ErrorResponse.error = error;
+        return res
+                .status(error.statusCode)
+                .json(ErrorResponse);
+    }
+}
+
 module.exports = {
     create,
     signIn,
     isAuthenticated,
+    getUser,
 }

@@ -27,10 +27,26 @@ class UserRepository {
         }
     }    
 
+    async getByEmail_secure(userEmail) {
+        try {
+            const user = await User.findOne({
+                where: { email: userEmail },
+                attributes: {
+                    exclude: ['password'],
+                }
+            });
+    
+            return user; // Returns the user or null if not found
+        } catch (error) {
+            console.log('Something went wrong while fetching user:', error.message);
+            throw error;
+        }
+    }  
+
     async getById(userId) {
         try{
             const user = await User.findByPk(userId, {
-                attributes: { exclude: ['password'] },
+                attributes: { exclude: [ 'id', 'password' ] },
             });
             return user;
         } catch(error) {
