@@ -10,6 +10,7 @@ const create = async (req, res) => {
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
+            about: req.body.about
         });
         SuccessResponse.message = 'successfully created a new user';
         SuccessResponse.data = response;

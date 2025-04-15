@@ -58,9 +58,7 @@ class UserService {
 
     createToken(user) {
         try {
-            const token = jwt.sign(user.get({plain: true}), JWT_PRIVATE_KEY, {
-                expiresIn: '5h',
-            });
+            const token = jwt.sign(user.get({plain: true}), JWT_PRIVATE_KEY);
             return token;
         } catch (error) {
             console.log(error);
